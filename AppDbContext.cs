@@ -27,9 +27,8 @@ namespace MultiTenantApplication
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Product>().IsMultiTenant();
             modelBuilder.ConfigureMultiTenant();
+            base.OnModelCreating(modelBuilder);
             //modelBuilder.Entity<TenantInfo>().Property(ti => ti.Id).ValueGeneratedOnAdd(); ;
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -4,10 +4,8 @@ using MultiTenantApplication.Entities;
 
 namespace MultiTenantApplication.Controllers
 {
-
-    [ApiController]
-    [Route("[controller]")]
-    public class ProductsController : Controller
+   
+    public class ProductsController : BaseTenantController
     {
         private AppDbContext _db;
 

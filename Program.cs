@@ -3,14 +3,15 @@ using Microsoft.EntityFrameworkCore;
 using MultiTenantApplication;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers();
 
 // Add services to the container.
 
-builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 var connection = builder.Configuration.GetConnectionString("sqlserver");
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -21,29 +22,21 @@ builder.Services.AddDbContext<TenantStoreDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("sqlserver"));
 });
 builder.Services.AddMultiTenant<TenantInfo>()
-    .WithHeaderStrategy("tenant")
+    .WithRouteStrategy()
     .WithEFCoreStore<TenantStoreDbContext, TenantInfo>();
 
-/*
-.WithInMemoryStore(options =>
- {
-     options.Tenants.Add(new TenantInfo { Id = "1", Identifier = "Apple"});
-     options.Tenants.Add(new TenantInfo { Id = "2", Identifier = "Samsung" });
- });*/
-
 var app = builder.Build();
-app.UseMultiTenant();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseHttpsRedirection();
-
+app.UseRouting();
 app.UseAuthorization();
-
+app.UseMultiTenant();
 app.MapControllers();
 
 app.Run();
