@@ -3,12 +3,10 @@ using Finbuckle.MultiTenant.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using MultiTenantApplication.dtos;
 using Newtonsoft.Json;
-using System.Text.Json.Serialization;
 
 namespace MultiTenantApplication.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
     public class TenantsController : Controller
     {
         TenantStoreDbContext _tenantContext;
@@ -16,7 +14,8 @@ namespace MultiTenantApplication.Controllers
         _tenantContext = tenantContext;
         }
         [HttpGet]
-        public string GetCurrentTenant()
+        [Route("{__tenant__}/[action]")]
+        public string Info()
         {
              var tenantInfo = HttpContext.GetMultiTenantContext<TenantInfo>().TenantInfo;
 
@@ -30,6 +29,7 @@ namespace MultiTenantApplication.Controllers
              return JsonConvert.SerializeObject(tenantInfo)!;
         }
         [HttpGet]
+        [Route("[controller]/[action]")]
         public async Task<ITenantInfo> AddTenant([FromQuery] TenantDto tenant)
         {
             TenantInfo tenantInfo = new TenantInfo() { Id = Guid.NewGuid().ToString(), Identifier = tenant.Name };
